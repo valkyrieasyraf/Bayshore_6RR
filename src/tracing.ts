@@ -1,7 +1,5 @@
 // OpenTelemetry tracing module
 
-
-
 import * as opentelemetry from '@opentelemetry/sdk-node';
 
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
