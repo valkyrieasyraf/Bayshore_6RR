@@ -4,13 +4,13 @@
   "description": "Wangan Midnight Maximum Tune 6RR server implementation. Written in Typescript. Edited by Pixel Cheeze",
   "main": "dist/index.js",
   "repository": "https://github.com/valkyrieasyraf/Bayshore_6RR",
-  "author": "ValkyrieAsyraf",
-  "license": "GNU Aduino 3.0",
+  "author": "valkyrieasyraf",
+  "license": "GNU Affero General Public License v3.0",
   "private": false,
   "scripts": {
     "dev": "tsc && node dist && pause",
     "build_protos": "tsc -p ./tsconfig.proto.json",
-    "install_pm2": "i pm2 --save-dev"
+    "install_pm2": "i pm2 --save-dev && pm2 start ./dist/index.js --name 6RR -i max --update-env"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
