@@ -110,7 +110,7 @@ export default class AllnetModule extends Module {
 
         
         // -----------------------------WEBSITE STUFF-----------------------------
-        let website = Config.getConfig().website || 0;
+        /*let website = Config.getConfig().website || 0;
         if(website === 1)
         {
             // -------------------------------HTML STUFF-------------------------------
@@ -547,9 +547,7 @@ export default class AllnetModule extends Module {
                     // Send the response to the client
                     res.send(message);
                 }
-            });
+            });*/
         }
     }
-  }
- }
 }
