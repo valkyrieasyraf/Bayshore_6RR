@@ -1,14 +1,14 @@
 {
-    "placeId": "THA",
-    "shopName": "WMMT Barn THA",
-    "shopNickname": "WMMT Barn THA",
-    "regionId": "40",
-    "country": "THA",
-    "regionName": "THA",
+    "placeId": "JPN01234",
+    "shopName": "Bayshore 6RR",
+    "shopNickname": "Bayshore 6RR",
+    "regionId": "1",
+    "country": "JPN",
+    "regionName": "JPN01234",
     "serverIp": "127.0.0.1",
     "gameOptions": {
-        "grantFullTuneTicketToNewUsers": 99,
-        "giftCarsTicketToNewUsers": 1,
+        "grantFullTuneTicketToNewUsers": 5,
+        "giftCarsTicketToNewUsers": 0,
         "grantMeterToNewcar": 42,
         "grantNameplateToNewcar": 247,
         "grantCustomcolorTonewCar": 42,
@@ -31,6 +31,7 @@
         "scratchEnabled": 2, 
         "scratchType": 1, 
         "giveMeterReward": 0,
-		"newCardsBanned": 0
-    }
+	"newCardsBanned": 0
+    },
+	"notices": ["Input your banner message here"]
 }
