@@ -1,15 +1,17 @@
 {
-  "name": "wmmt6rrserverth",
-  "version": "1.0.0",
-  "description": "Wangan Midnight Maximum Tune 6RR server implementation",
+  "name": "bayshore_6rr_neo",
+  "version": "1.2.0",
+  "description": "Wangan Midnight Maximum Tune 6RR server implementation. Written in Typescript. Edited by Pixel Cheeze",
   "main": "dist/index.js",
-  "repository": "https://github.com/khunmenn/wmmt6rrserverth",
-  "author": "KhunMenn",
-  "license": "MIT",
+  "repository": "https://github.com/valkyrieasyraf/Bayshore_6RR",
+  "author": "ValkyrieAsyraf",
+  "license": "GNU",
   "private": false,
   "scripts": {
     "dev": "tsc && node dist",
     "build_protos": "tsc -p ./tsconfig.proto.json"
+    "install_pm2": "i pm2 --save-dev"
+    "run_pm2": "start ./dist/index.js --name 6RR -i max --update-env"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
