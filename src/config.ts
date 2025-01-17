@@ -12,6 +12,7 @@ export interface ConfigFile {
     unix?: UnixOptions;
     notices?: string[];
     sentryDsn?: string;
+    website?: number;
 }
 
 export interface UnixOptions {
