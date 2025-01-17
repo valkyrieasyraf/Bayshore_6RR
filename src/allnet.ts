@@ -107,5 +107,449 @@ export default class AllnetModule extends Module {
                 
             res.send(resParams);
         });
+
+        
+        // -----------------------------WEBSITE STUFF-----------------------------
+        let website = Config.getConfig().website || 0;
+        if(website === 1)
+        {
+            // -------------------------------HTML STUFF-------------------------------
+            // Index HTML
+            app.get("/", function(req, res) {
+
+                // Send the HTML File
+                res.sendFile(path.resolve('public_html/index.html'));
+            });
+
+
+            // Download HTML
+            app.get("/download", function(req, res) {
+
+                // Send the HTML File
+                res.sendFile(path.resolve('public_html/download.html'));
+            });
+
+
+            // Ranking TA HTML
+            app.get("/ranking_ta", function(req, res) {
+
+                // Send the HTML File
+                res.sendFile(path.resolve('public_html/ranking_ta.html'));
+            });
+
+
+            // Ranking OCM HTML
+            app.get("/ranking_ocm", function(req, res) {
+
+                // Send the HTML File
+                res.sendFile(path.resolve('public_html/ranking_ocm.html'));
+            });
+
+
+            // Crown Holder HTML
+            app.get("/crown_holder", function(req, res) {
+
+                // Send the HTML File
+                res.sendFile(path.resolve('public_html/crown_holder.html'));
+            });
+
+
+            // News HTML
+            app.get("/news/:id", function(req, res) {
+
+                // Get Request Parameter
+                let id = req.params.id;
+
+                // Send the HTML File
+                res.sendFile(path.resolve('public_html/news/' +id+ '.html'));
+            });
+
+
+            // -------------------------------API STUFF--------------------------------
+            // GET Ranking TA
+            app.get('/api/ranking_ta', async (req, res) => {
+
+                // Get the request body
+                let query = req.query;
+
+                // Message Response
+                let message: any = {
+                    error: null,
+                    user: null
+                };
+
+                try
+                {
+                    // Get the record from the database
+                    let user = await prisma.timeAttackRecord.findMany({
+                        where:{
+                            course: Number(query.course)
+                        },
+                        include:{
+                            car: {
+                                select:{
+                                    carId: true,
+                                    name: true,
+                                    visualModel: true,
+                                    regionId: true,
+                                    level: true,
+                                    defaultColor: true
+                                }
+                            }
+                        },
+                        orderBy:{
+                            time: 'asc'
+                        }
+                    });
+
+                    if(user)
+                    {
+                        message.user = user;
+                    }
+                    else
+                    {
+                        message.error = 404
+                    }
+                }
+                catch(e) // Failed to retrieve cars
+                {
+                    
+                }
+
+                // Send the response to the client
+                res.send(message);
+            });
+
+
+            // GET Ranking OCM
+            app.get('/api/ranking_ocm', async (req, res) => {
+
+                // Get the request body
+                let query = req.query;
+
+                // Message Response
+                let message: any = {
+                    error: null,
+                    user: null
+                };
+
+                try
+                {
+                    let getTime = await prisma.oCMEvent.findFirst({
+                        where:{
+                            competitionId: Number(query.competitionId)
+                        },
+                    });
+                    let date = Math.floor(new Date().getTime() / 1000);
+
+                    if(getTime)
+                    {
+                        // Get the record from the database
+                        let user;
+
+                        // Qualifying Time
+                        if(getTime.qualifyingPeriodCloseAt > date && getTime.qualifyingPeriodStartAt < date)
+                        {
+                            user = await prisma.oCMGhostBattleRecord.findMany({
+                                where:{
+                                    competitionId: Number(query.competitionId)
+                                },
+                                include:{
+                                    car: {
+                                        select:{
+                                            carId: true,
+                                            name: true,
+                                            visualModel: true,
+                                            regionId: true,
+                                            level: true,
+                                            defaultColor: true
+                                        }
+                                    }
+                                },
+                                orderBy:{
+                                    result: 'desc'
+                                }
+                            });
+                        }
+                        // Main Draw and Closed Time
+                        else
+                        {
+                            
+                            user = await prisma.oCMTally.findMany({
+                                where:{
+                                    competitionId: Number(query.competitionId)
+                                },
+                                include:{
+                                    car: {
+                                        select:{
+                                            carId: true,
+                                            name: true,
+                                            visualModel: true,
+                                            regionId: true,
+                                            level: true,
+                                            defaultColor: true
+                                        }
+                                    }
+                                },
+                                orderBy:{
+                                    result: 'desc'
+                                }
+                            });
+                        }
+                        
+
+                        if(user)
+                        {
+                            message.user = user;
+                        }
+                        else
+                        {
+                            message.error = 404
+                        }
+                    }
+                    else
+                    {
+                        message.error = 404
+                    }
+                }
+                catch(e) // Failed to retrieve cars
+                {
+                    
+                }
+                
+                // Send the response to the client
+                res.send(message);
+            });
+
+
+            // GET OCM List
+            app.get('/api/ocm_list', async (req, res) => {
+
+                // Message Response
+                let message: any = {
+                    error: null,
+                    competition: null
+                };
+
+                try
+                {
+                    let getOCMList = await prisma.oCMEvent.findMany({
+                        orderBy:{
+                            competitionId: 'desc'
+                        }
+                    });
+
+                    if(getOCMList)
+                    {
+                        message.competition = getOCMList;
+                    }
+                    else
+                    {
+                        message.error = 404
+                    }
+                }
+                catch(e) // Failed to retrieve cars
+                {
+                    
+                }
+
+                // Send the response to the client
+                res.send(message);
+            });
+
+
+            // GET Ranking OCM
+            app.get('/api/crown_holder', async (req, res) => {
+                // Message Response
+                let message: any = {
+                    error: null,
+                    data: null
+                };
+
+                // Get the data
+                try
+                {
+                    let data = [{ carId: 0, area: [0], name: '', visualModel: 0, defaultColor: 0 }];
+                    data = await prisma.$queryRaw`
+                    SELECT "CarCrown"."carId", "Car"."name", "Car"."visualModel", "Car"."defaultColor" FROM "CarCrown" JOIN "Car" ON "CarCrown"."carId" = "Car"."carId" GROUP BY "CarCrown"."carId", "Car"."name", "Car"."visualModel", "Car"."defaultColor" ORDER BY MIN(array_position(array[0,1,2,3,4,5,6,7,8,9,10,18,11,12,13], "CarCrown"."area"))`;
+
+                    if (data.length > 0)
+                    {
+                        for(let i=0; i<data.length; i++)
+                        {
+                            let userCar = await prisma.carCrown.findMany({
+                                where: {
+                                    carId: data[i].carId
+                                },
+                                select:{
+                                    area: true
+                                },
+                                orderBy:{
+                                    area: 'asc'
+                                }
+                            });
+                            let array = [];
+
+                            for(let j=0; j<userCar.length; j++)
+                            {
+                                array.push(userCar[j].area);
+                            }
+                            
+                            data[i].area = array;
+                        }
+
+                        message.data = data;
+                    }
+                }
+                catch(e) // Failed to retrieve cars
+                {
+                    
+                }
+
+                // Send the response to the client
+                res.send(message);
+            });
+
+
+            // GET News Image
+            app.get('/news/assets/:fileName', async (req, res) => {
+                
+                // Get Request Parameter
+                let fileName = req.params.fileName;
+                let fullPath = path.resolve('public_html/news/assets/' +fileName);
+
+                // CSS
+                if(fileName.includes('png') ||
+                        fileName.includes('gif') ||
+                        fileName.includes('jpg') ||
+                        fileName.includes('jpeg') ||
+                        fileName.includes('ico') )
+                {
+                    try
+                    {
+                        if(fs.existsSync(fullPath))
+                        {
+                            let format = fileName.split(".");
+                            res.writeHead(200, {'Content-Type': 'image/'+format[format.length-1] });
+
+                            fs.createReadStream(fullPath).pipe(res);
+                        }
+                        else
+                        {
+                            // Message Response
+                            let message: any = {
+                                error: 404,
+                            };
+
+                            // Send the response to the client
+                            res.send(message);
+                        }
+                    }
+                    catch(e) // Failed to retrieve cars
+                    {
+                        // Message Response
+                        let message: any = {
+                            error: 404,
+                        };
+
+                        // Send the response to the client
+                        res.send(message);
+                    }
+                }
+                // Just Send It
+                else
+                {
+                    // Message Response
+                    let message: any = {
+                        error: 404,
+                    };
+
+                    // Send the response to the client
+                    res.send(message);
+                }
+            });
+
+
+            // GET Visual Model Image
+            app.get('/assets/:folderName/:fileName', async (req, res) => {
+                
+                // Get Request Parameter
+                let folderName = req.params.folderName;
+                let fileName = req.params.fileName;
+                let fullPath = path.resolve('public_html/assets/' +folderName+ '/' +fileName);
+
+                // CSS
+                if(folderName.includes('css') || folderName.includes('js'))
+                {
+                    try
+                    {
+                        if(fs.existsSync(fullPath))
+                        {
+                            res.sendFile(fullPath);
+                        }
+                    }
+                    catch(e) // Failed to retrieve cars
+                    {
+                        
+                    }
+                }
+                // PNG assets
+                else if(fileName.includes('png') ||
+                        fileName.includes('gif') ||
+                        fileName.includes('jpg') ||
+                        fileName.includes('jpeg') ||
+                        fileName.includes('ico') )
+                {
+                    try
+                    {
+                        if(fileName == '56.png')
+                        {
+                            fileName = '56_2.png';
+                        }
+
+                        if(fs.existsSync(fullPath))
+                        {
+                            let format = fileName.split(".");
+                            res.writeHead(200, {'Content-Type': 'image/'+format[format.length-1] });
+
+                            fs.createReadStream(fullPath).pipe(res);
+                        }
+                        else
+                        {
+                            // Message Response
+                            let message: any = {
+                                error: 404,
+                            };
+
+                            // Send the response to the client
+                            res.send(message);
+                        }
+                    }
+                    catch(e) // Failed to retrieve cars
+                    {
+                        // Message Response
+                        let message: any = {
+                            error: 404,
+                        };
+
+                        // Send the response to the client
+                        res.send(message);
+                    }
+                }
+                // Just Send It
+                else
+                {
+                    // Message Response
+                    let message: any = {
+                        error: 404,
+                    };
+
+                    // Send the response to the client
+                    res.send(message);
+                }
+            });
+        }
     }
+  }
+ }
 }
