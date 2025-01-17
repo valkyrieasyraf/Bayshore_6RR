@@ -1,5 +1,5 @@
 import express, { Application } from "express";
-import { prisma } from ".";
+import { Prisma } from "../prisma";
 import { Module } from "./module";
 
 
