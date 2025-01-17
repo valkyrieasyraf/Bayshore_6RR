@@ -6,6 +6,7 @@
     "country": "JPN",
     "regionName": "JPN01234",
     "serverIp": "127.0.0.1",
+    "website": "0"
     "gameOptions": {
         "grantFullTuneTicketToNewUsers": 5,
         "giftCarsTicketToNewUsers": 0,
@@ -31,7 +32,9 @@
         "scratchEnabled": 2, 
         "scratchType": 1, 
         "giveMeterReward": 0,
-	"newCardsBanned": 0
+       	"newCardsBanned": 0
     },
-	"notices": ["Input your banner message here"]
+     "notices": ["Input your banner message here", "Message 2", "Message 3"], 
+     "screenshot": 0,
+     "revisionCheck": 0
 }
