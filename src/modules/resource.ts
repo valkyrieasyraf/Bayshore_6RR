@@ -25,10 +25,10 @@ export default class ResourceModule extends Module {
 
             // Response data
             places.push(new wm.wm.protobuf.Place({
-                placeId: Config.getConfig().placeId || 'THA',
+                placeId: Config.getConfig().placeId || 'JPN01234',
                 regionId: Number(Config.getConfig().regionId) || 1,
-                shopName: Config.getConfig().shopName || 'WMMT Barn THA',
-                country: Config.getConfig().country || 'THA'
+                shopName: Config.getConfig().shopName || 'Bayshore 6RR',
+                country: Config.getConfig().country || 'JPN'
             }));
 
             let checkPlaceList = await prisma.placeList.findFirst({
@@ -43,10 +43,10 @@ export default class ResourceModule extends Module {
 
                 await prisma.placeList.create({
                     data:{
-                        placeId: Config.getConfig().placeId || 'THA',
+                        placeId: Config.getConfig().placeId || 'JPN01234',
                         regionId: Number(Config.getConfig().regionId) || 1,
-                        shopName: Config.getConfig().shopName || 'WMMT Barn THA',
-                        country: Config.getConfig().country || 'THA'
+                        shopName: Config.getConfig().shopName || 'Bayshore 6RR',
+                        country: Config.getConfig().country || 'JPN'
                     }
                 })
             }
