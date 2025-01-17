@@ -1,5 +1,5 @@
-# Bayshore_6RR
-A server implementation for Wangan Midnight Maximum Tune 6RR, written in TypeScript. Modified and edited by PixelCheeze, Khunmenn and Tiaraaa.
+# Bayshore_6RR (Neo Alpha Built)
+A server implementation for Wangan Midnight Maximum Tune 6RR, based from Bayshore 6 and 6R, written in TypeScript language. Modified and edited by PixelCheeze, Khunmenn and Tiaraaa for W6W10JPN05 support.
 
 
 ### THIS PROJECT IS CURRENTLY FOR PRIVATE USE. THIS IS NOT FOR COMMERCIAL USAGE. RISK ON YOUR OWN FROM ANY FURTHER LEGAL CONSULT / CEASE & DESIST FROM OFFICIAL GAME DISTRUBUTOR WHEN HOSTING A W6W SERVER FOR "n-0" GAME UNDER INTERNATIONAL, AND "n-1" for JPN. DO NOT MESSAGE ME, REPO CONTRIBUTOR OR ANYONE HERE FOR SUPPORT ###
@@ -22,14 +22,15 @@ This repo is based on the original repo (https://github.com/ProjectAsakura/Baysh
  - Online Championship Match (OCM)
  
  ## What are things that is not working 
- - Transfer from 5, 5DX, 5DX+ or 6
+ - Transfer from 5, 5DX, 5DX+, 6 and 6R
  - Bingo Reward Claims from Terminal
- - Wangan Koshien Tournament Event
+ - Wangan Koshien Tournament Event (Not implemented yet)
  - Story Mode Saving
- - Registered Region will be shown as server default
+ - Registered Car Region will be shown as server default and not randomised
+ - Terminal Bug for Dress-Up Parts, OCM Ranking List and Accepting Special Item from Transfer
 
 ## Credits
-This software is part of [Project Asakura](https://github.com/ProjectAsakura) 
+This project is part of [Project Asakura](https://github.com/ProjectAsakura) 
 
 It was first started by [Astelle Nightshade](https://github.com/ry00001), but most of the game's features were implemented by [Kitsu](https://github.com/shiroikitsu8).
 
@@ -40,9 +41,12 @@ Special thanks:
  - [The Wangan Midnight Emulation Discord server](https://discord.gg/r3nbd4x) - helping me out on a bunch of stuff.
 
 ## Donations
-Donations are not required, however I've made from scratch with only myself and a contributor from Thailand. Thanks for the merge of custom loader, openbanapass and more. But also if you want to thank me for my work, [please buy me a coffee or two](https://www.paypal.me/valkyrieasyraf)
+Donations are not required, however I've made from scratch together with my cliques and myself and also a contributor from Singapore, Malaysia, Thailand. Thanks for the merge of custom loader, openbanapass and more. But also if you want to thank me for my work, [please buy me a coffee or two or three](https://www.paypal.me/valkyrieasyraf)
 
-This won't get you anything other than my gratitude, the entire project (private) is and will always remain available to selected contributors for free and open source, depending on the usage and conditions.
+This won't get you anything other than my gratitude, the entire project (private) is and will always remain available to selected contributors for free and open source, depending on the usage and conditions. Modifications made by user will need to seek approval from us before we carry on with acceptance of merging any commits made in this Github repository.
 
-## On TeknoParrot
+## For TeknoParrot
 The TeknoParrot team (TeknoGods) are not authorised to use **any part** of this project. **Do not integrate any portion of Bayshore into TeknoParrot.**
+
+## For MOMO AND CHINA SERVERS
+The MOMO and other development team from China are not authorised to use, modify, update, forked and share **any part** of this project at all cost.
