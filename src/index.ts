@@ -1,5 +1,6 @@
-// Bayshore - a Wangan Midnight Maximum Tune 6RR private server.
-// Made with love by Luna, and part of Project Asakura. Edited by Pixel Cheeze, Khunnmenn and Tiaraa
+// Bayshore - a Wangan Midnight Maximum Tune 6RR private server. Based original from Bayshore 6 and 6R
+
+// Made by Luna and Kitsu, and part of Project Asakura. Modified source code for W6W10JPN. Edited by Pixel Cheeze, Khunnmenn and Tiaraa
 
 import express, { Router } from 'express';
 import {PrismaClient} from '@prisma/client';
@@ -33,15 +34,17 @@ const PORT_ALLNET = 20080;
 const PORT_MUCHA = 10082;
 const PORT_BNGI = 9002;
 const PORT_API = 9003;
+/*const PORT_WEB = 3000;*/
 
 const app = express();
 const muchaApp = express();
 const allnetApp = express();
 const apiApp = express();
+const webApp = express();
 
 app.use(bodyParser.raw({
     type: '*/*',
-    limit: '50mb' // idk.. i got PayloadTooLargeError: request entity too large (adding this solve the problem)
+    limit: '100mb' // idk.. i got PayloadTooLargeError: request entity too large (adding this solve the problem)
 }));
 
 let useSentry = !!Config.getConfig().sentryDsn;
@@ -102,6 +105,16 @@ allnetApp.use((req, res, next) => {
     next()
 });
 
+webApp.use((req, res, next) => {
+    console.log(timestamp+` [APP_WEB] ${req.method} ${req.url}`);
+    next()
+});
+
+apiApp.use((req, res, next) => {
+    console.log(timestamp+` [APP_API] ${req.method} ${req.url}`);
+    next()
+});
+
 // Get all of the files in the modules directory
 let dirs = fs.readdirSync('dist/modules');
 // Loop over the files
@@ -121,9 +134,11 @@ for (let i of dirs)
     }
 }
 
-// Host on / and /wmmt6/ path
+// Host on / and /wmmt6/ path including API and Web Apps
 app.use('/', appRouter);
 app.use('/wmmt6/', appRouter);
+app.use('/api/', appRouter);
+app.use('/web/', appRouter);
 
 app.all('*', (req, res) => {
     console.log(timestamp+` [ALL_MAIN] ${req.method} ${req.url} is unhandled`);
@@ -171,3 +186,9 @@ https.createServer({key, cert}, app).listen(PORT_BNGI, '0.0.0.0', 511, () => {
 https.createServer({key, cert}, app).listen(PORT_API, '0.0.0.0', 511, () => {
     console.log(`API server listening on port ${PORT_API}!`);
 })
+
+// Create the Website server
+https.createServer({key, cert}, app).listen(PORT_WEB, '0.0.0.0', 511, () => {
+    console.log(`API server listening on port ${PORT_WEB}!`);
+})
+
