@@ -80,7 +80,7 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
             }
         }
 
-        // bingo reward
+        // Bingo Mode reward
         if (body.earnedUserItems.length !== 0) { 
             console.log('Bingo reward available, continuing ...');
             for (let i = 0; i < body.earnedUserItems.length; i++) {
@@ -134,12 +134,12 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
                     : [];
 
             // Combine both together
-            let updatedAcquiredBingoNumbers: any[];
+            let updatedacquiredBingoNumbers: any[];
 
-            if (getBingoNumbersDB && Array.isArray(getBingoNumbersDB.AcquiredBingoNumbers)) {
-                updatedAcquiredBingoNumbers = getBingoNumbersDB.AcquiredBingoNumbers.concat(NewBingoNumbers);
+            if (getBingoNumbersDB && Array.isArray(getBingoNumbersDB.acquiredBingoNumbers)) {
+                updatedacquiredBingoNumbers = getBingoNumbersDB.acquiredBingoNumbers.concat(NewBingoNumbers);
             } else {
-                updatedAcquiredBingoNumbers = NewBingoNumbers;
+                updatedacquiredBingoNumbers = NewBingoNumbers;
             }
 
             // Ghost update data
@@ -151,7 +151,7 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
                 stampSheet: stampSheet,
                 stampSheetCount: common.sanitizeInputNotZero(ghostResult.stampSheetCount),
                 rgTrophy: common.sanitizeInputNotZero(ghostResult.rgTrophy),
-                AcquiredBingoNumbers: updatedAcquiredBingoNumbers,
+                acquiredBingoNumbers: updatedacquiredBingoNumbers,
 
             }
 
@@ -656,8 +656,12 @@ export async function saveGhostBattleResult(body: wm.protobuf.SaveGameResultRequ
             {
                 console.log('Normal Ghost Mode Found - Bingo Challenge');
 
+                console.log(body.rgResult?.opponents);
+                // TODO Make save for bingo number
+
+
                 // TODO: Make saving
-                ghost_historys = await ghost_history.saveGhostHistory(body);
+                ghost_historys = await ghost_history.saveGhostBingoHistory(body);
 
                 // Return Stamp (Shuttle Match)
                 await ghost_stamp.shuttleReturnStamp(body);
