@@ -6,6 +6,7 @@ import { Car } from "@prisma/client";
 
 // Import Proto
 import * as wm from "../wmmt/wm.proto";
+import * as wmsrv from "../wmmt/wmsrv.proto";
 
 // Import Util
 import * as scratch from "../util/scratch";
