@@ -106,9 +106,9 @@ export default class AllnetModule extends Module {
                 nickname: shopNick,
                 region0: regionId,
                 region_name0: regionName,
-                region_name1: "X",
-                region_name2: "Y",
-                region_name3: "Z",
+                region_name1: "Bayshore 6RR",
+                region_name2: "https://github.com/valkyrieasyraf/Bayshore_6RR",
+                region_name3: "Server Implementation for WMMT6RR",
                 country: country,
                 allnet_id: "456",
                 timezone: "002:00",
@@ -127,7 +127,7 @@ export default class AllnetModule extends Module {
         });
 
         
-        // -----------------------------WEBSITE STUFF-----------------------------
+        // -----------------------------WEBSITE-----------------------------
         /*let website = Config.getConfig().website || 0;
         if(website === 1)
         {
