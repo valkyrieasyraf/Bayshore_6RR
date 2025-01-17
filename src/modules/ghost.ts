@@ -180,7 +180,7 @@ export default class GhostModule extends Module {
                 stampReturnStats: car?.stampSheet || null,
 				history: carsHistory || null,
 				promotedToBuddy: false,
-				acquiredBingoNumbers: car?.AcquiredBingoNumbers || null //TODO: Implement Bingo
+				acquiredBingoNumbers: car?.acquiredBingoNumbers || null //TODO: Implement Bingo
 			};
 
             // Encode the response
