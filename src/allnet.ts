@@ -1,9 +1,15 @@
 import bodyParser from "body-parser";
 import { Application } from "express";
+import { prisma } from ".";
 import { unzipSync } from "zlib";
 import { Module } from "./module";
 import iconv from "iconv-lite";
 import { Config } from "./config";
+import * as common from "./modules/util/common";
+
+const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 
 // TODO: Move this into the config
 const STARTUP_URI = `https://${Config.getConfig().serverIp || "localhost"}:9002`;
@@ -15,6 +21,18 @@ export default class AllnetModule extends Module {
             type: '*/*',
             limit: '50mb' // idk.. i got PayloadTooLargeError: request entity too large (adding this solve the problem)
         }));
+
+        app.use(express.json({
+            type: '*/*',
+            limit: '50mb' // idk.. i got PayloadTooLargeError: request entity too large (adding this solve the problem)
+        }));
+
+
+        app.use(cors({
+            origin: '*'
+        }));
+
+
 
         app.use("/sys/servlet/PowerOn", function(req, res, next) {
             console.log('amauthd');
@@ -547,7 +565,7 @@ export default class AllnetModule extends Module {
                     // Send the response to the client
                     res.send(message);
                 }
-            });*/
+            });
         }
     }
-}
+}*/
