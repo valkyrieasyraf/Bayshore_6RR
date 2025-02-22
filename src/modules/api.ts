@@ -1,21 +1,20 @@
 import express, { Application } from "express";
-import { Prisma } from "../prisma";
+import { prisma } from ".";
 import { Module } from "./module";
-
+import axios from "axios"; // For making HTTP requests to Discord webhook
 
 export default class ApiModule extends Module {
+    private discordWebhookUrl: string = "YOUR_DISCORD_WEBHOOK_URL"; // Replace with your Discord webhook URL
+
     register(app: Application): void {
-        
         app.use(express.urlencoded({
             type: '*/*',
             extended: true
         }));
-    
 
         app.use(express.json({
             type: '*/*'
         }));
-
 
         // API Get Requests
         // Get Current Bayshore Version
@@ -25,98 +24,80 @@ export default class ApiModule extends Module {
                 version: null
             };
 
-            let myJSON = '{'+
-                            '"version": "v1.0.0",'+
-                            '"log":'+
-                                '['+
-                                    '"• Fix ghost play count when retiring ocm",'+
-                                    '"• API for ocm ranking",'+
-                                    '"• Fix unlimited ghost stamp return (hopefully no more of this)",'+
-                                    '"• Fix give meter reward bug if playCount still 0",'+
-                                    '"• Hopefully fix ocm HoF bug"'+
-                                    '"• Fix duplicate id in carOrder"'+
-                                    '"• Fix OCM HoF wrong shopName"'+
-                                ']'+
-                         '}';
+            let myJSON = '{' +
+                '"version": "v1.0.0",' +
+                '"log":' +
+                '[' +
+                '"• Fix ghost play count when retiring ocm",' +
+                '"• API for ocm ranking",' +
+                '"• Fix unlimited ghost stamp return (hopefully no more of this)",' +
+                '"• Fix give meter reward bug if playCount still 0",' +
+                '"• Hopefully fix ocm HoF bug"' +
+                '"• Fix duplicate id in carOrder"' +
+                '"• Fix OCM HoF wrong shopName"' +
+                ']' +
+                '}';
             message.version = JSON.parse(myJSON);
 
             // Send the response to the client
             res.send(message);
-        })
+        });
 
         // Post Login
         app.post('/api/login', async (req, res) => {
-
-            // Get the request body
-			let query = req.query;
-
-            // Message Response
+            let query = req.query;
             let message: any = {
                 error: null,
                 user: null
             };
 
-            // Get the user from the database
-			let user = await prisma.user.findFirst({
-				where: {
-					chipId: {
+            let user = await prisma.user.findFirst({
+                where: {
+                    chipId: {
                         startsWith: query.cardChipId?.toString()
                     },
-					accessCode: query.accessCode?.toString()
-				},
-				include: {
-					cars: {
-						select: {
-							state: true,
-							gtWing: true,
-							lastPlayedPlace: true,
-                            carId: true, 
+                    accessCode: query.accessCode?.toString()
+                },
+                include: {
+                    cars: {
+                        select: {
+                            state: true,
+                            gtWing: true,
+                            lastPlayedPlace: true,
+                            carId: true,
                             name: true,
                             defaultColor: true,
-                            visualModel: true, 
-                            level: true, 
-                            title: true, 
-                            regionId: true, 
+                            visualModel: true,
+                            level: true,
+                            title: true,
+                            regionId: true,
                         }
-					}
-				}
-			});
-            
-            if(user)
-            {
+                    }
+                }
+            });
+
+            if (user) {
                 message.user = user;
-            }
-            else
-            {
-                message.error = 404
+            } else {
+                message.error = 404;
             }
 
-            // Send the response to the client
             res.send(message);
-        })
-
+        });
 
         // Get Current Competition Id
         app.get('/api/get_competition_id', async (req, res) => {
-
-            // Get current date
             let date = Math.floor(new Date().getTime() / 1000);
-
-            // Message Response
             let message: any = {
                 error: null,
                 competitionId: 1 // default
             };
 
-            // Get current / previous active OCM Event
             let ocmEventDate = await prisma.oCMEvent.findFirst({
                 where: {
-					// qualifyingPeriodStartAt is less than current date
-					qualifyingPeriodStartAt: { lte: date },
-		
-					// competitionEndAt is greater than current date
-					competitionEndAt: { gte: date },
-				},
+                    qualifyingPeriodStartAt: { lte: date },
+                    competitionEndAt: { gte: date },
+                },
                 orderBy: [
                     {
                         dbId: 'desc'
@@ -125,21 +106,19 @@ export default class ApiModule extends Module {
                         competitionEndAt: 'desc',
                     },
                 ],
-                select:{
+                select: {
                     competitionId: true
                 }
             });
 
-            if(ocmEventDate)
-            {
+            if (ocmEventDate) {
                 message.competitionId = ocmEventDate.competitionId;
-            }
-            else{
+            } else {
                 ocmEventDate = await prisma.oCMEvent.findFirst({
                     orderBy: {
                         dbId: 'desc'
                     },
-                    select:{
+                    select: {
                         competitionId: true
                     }
                 });
@@ -147,90 +126,123 @@ export default class ApiModule extends Module {
                 message.competitionId = ocmEventDate!.competitionId;
             }
 
-            // Send the response to the client
             res.send(message);
         });
 
-
-        // Get Current Competition Id
+        // Get Current Competition Id for Hall of Fame
         app.get('/api/get_hof_competition_id', async (req, res) => {
-
-            // Message Response
             let message: any = {
                 error: null,
                 competitionId: 1 // default
             };
 
-            // Get current / previous active OCM Event
             let ocmEventDate = await prisma.oCMTally.findFirst({
-                where:{
+                where: {
                     periodId: 999999999
                 },
                 orderBy: {
                     competitionId: 'desc'
                 },
-                select:{
+                select: {
                     competitionId: true
                 }
             });
 
-            if(ocmEventDate)
-            {
+            if (ocmEventDate) {
                 message.competitionId = ocmEventDate.competitionId;
             }
 
-            // Send the response to the client
             res.send(message);
         });
 
-
         // Get Competition Ranking
         app.get('/api/get_competition_ranking', async (req, res) => {
-
-            // Get url query
             let competitionId = Number(req.query.competitionId);
-
-            // Message Response
             let message: any = {
                 error: null,
                 cars: [],
                 lastPlayedPlace: 'Bayshore'
             };
- 
-            // Get all of the cars matching the query
+
             message.cars = await prisma.oCMTally.findMany({
-                where:{
+                where: {
                     competitionId: competitionId
                 },
                 orderBy: {
                     result: 'desc'
                 },
-                include:{
+                include: {
                     car: {
-                        select:{
-                            carId: true, 
+                        select: {
+                            carId: true,
                             name: true,
                             defaultColor: true,
-                            visualModel: true, 
-                            level: true, 
-                            title: true, 
-                            regionId: true, 
-                        }  
+                            visualModel: true,
+                            level: true,
+                            title: true,
+                            regionId: true,
+                        }
                     },
                 }
             });
 
             let getLastPlayedPlace = await prisma.oCMGhostBattleRecord.findFirst({
-                where:{
+                where: {
                     carId: message.cars[0].carId,
                     competitionId: competitionId
                 }
-            })
+            });
 
             message.lastPlayedPlace = getLastPlayedPlace?.playedShopName;
 
-            // Send the response to the client
             res.send(message);
+        });
+
+        // New Endpoint: Send Message to Discord
+        app.post('/api/send_discord_message', async (req, res) => {
+            const { message } = req.body;
+
+            if (!message) {
+                return res.status(400).send({ error: "Message is required" });
+            }
+
+            try {
+                await axios.post(this.discordWebhookUrl, {
+                    content: message
+                });
+
+                res.send({ success: true });
+            } catch (error) {
+                console.error("Failed to send message to Discord:", error);
+                res.status(500).send({ error: "Failed to send message to Discord" });
+            }
+        });
+
+        // New Endpoint: Update User Stats and Notify Discord
+        app.post('/api/update_user_stats', async (req, res) => {
+            const { userId, stats } = req.body;
+
+            if (!userId || !stats) {
+                return res.status(400).send({ error: "UserId and stats are required" });
+            }
+
+            try {
+                // Update user stats in the database
+                const updatedUser = await prisma.user.update({
+                    where: { id: userId },
+                    data: stats
+                });
+
+                // Send a message to Discord
+                await axios.post(this.discordWebhookUrl, {
+                    content: `User ${updatedUser.name} stats updated: ${JSON.stringify(stats)}`
+                });
+
+                res.send({ success: true, user: updatedUser });
+            } catch (error) {
+                console.error("Failed to update user stats:", error);
+                res.status(500).send({ error: "Failed to update user stats" });
+            }
         });
     }
 }
